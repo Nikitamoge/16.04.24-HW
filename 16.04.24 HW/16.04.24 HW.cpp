@@ -4,7 +4,9 @@ using namespace std;
 
 class Animal {
 public:
-    virtual void speak() = 0; 
+    virtual void speak() = 0;
+    virtual void scratch(bool HomeworkDone) {};
+    virtual void purr() {};
 };
 
 class Frog : public Animal {
@@ -27,7 +29,7 @@ public:
         cout << "Meow Meow Meow." << endl;
     }
 
-    void scratch(bool HomeworkDone) {
+    void scratch(bool HomeworkDone) override {
         if (HomeworkDone) {
             cout << "Owner is safe." << endl;
         }
@@ -36,22 +38,27 @@ public:
         }
     }
 
-    void purr() {
+    void purr() override {
         cout << "Purr Purr Purr." << endl;
     }
 };
 
 int main() {
-    unique_ptr<Animal> animals[3];
-    animals[0] = make_unique<Frog>();
-    animals[1] = make_unique<Dog>();
-    unique_ptr<Cat> cat = make_unique<Cat>();
-    animals[2] = move(cat);
+    Animal* animals[3];
+    animals[0] = new Frog();
+    animals[1] = new Dog();
+    animals[2] = new Cat();
 
     for (int i = 0; i < 3; i++) {
         animals[i]->speak();
+        Cat* cat = dynamic_cast<Cat*>(animals[i]);
+        if (cat != nullptr) {
+            cat->scratch(false);
+            cat->purr();
+        }
     }
 
-    cat->scratch(false);
-    cat->purr();
+    for (int i = 0; i < 3; i++) {
+        delete animals[i];
+    }
 }
